@@ -1,0 +1,198 @@
+---
+title: "PH718_Part_3"
+author:
+  - "Jasmine Lee"
+  - "Zhiyang Zhou"
+  - Jasmine (lee724@uwm.edu)
+# date: "2026-02-17"
+# date: "2026-02-16" to current date
+#   -> creation_date: "`r Sys.time()`" # not '' it's ``
+# date: "`r Sys.Date()`"
+date: "`r format(Sys.time(), '%Y/%m/%d %H:%M:%S')`" # To update the date everytime
+output: pdf_document
+bibliography: ph718.bib
+csl: apa-6th-edition.csl # Specify the citation style (e.g., APA, MLA, Chicago). The default style is Chicago Style (author - date). You can find more styles at https://www.zotero.org/styles.
+---
+# Introduction
+R Markdown is versatile and can be used for a variety of purposes, including: documents, presentations, dashboards, and websites. In this document, we will provide a brief introduction to R Markdown and demonstrate how to include R code and plots in your documents.
+
+# Installation of R Markdown
+
+# Basics of R Markdown
+
+## Headings: using "#"
+- `# for level 1 Heading`
+- `## for level 2 Heading`
+- `### for level 3 Heading`
+- `#### for level 4 Heading`
+- `##### for level 5 Heading`
+- `###### for level 6 Heading`
+- `####### for level 7 Heading` (not recommended)
+
+## Emphasis: using "*" or "_"
+- `*italic*` or `_italic_` for *italic text*
+- `**bold**` or `__bold__` for **bold text**
+- `~~strikethrough~~` for ~~strikethrough~~ text
+
+## Lists
+- Unordered lists: using `-`, `*`, or `+`
+  - Example:
+    + Item 1
+    + Item 2
+      - Subitem 2.1
+      - Subitem 2.2
+      * Subitem 2.3
+      * Subitem 2.4
+      * Subitem 2.5
+- Ordered lists: using numbers followed by a period
+  - Example:
+    1. First item
+    1. Second item
+        1. Subitem 2.1 - Have to indent two times to make it a subitem
+        1. Subitem 2.2
+        
+## Links and Images
+- Links: using `[link text](URL)`
+  - Example: [R Markdown website](http://rmarkdown.rstudio.com)
+  
+- Images: using `![alt text](image URL)`
+  <!-- - Example: ![R Logo](https://www.r-project.org/logo/Rlogo.png) - not gonna work -->
+  - Example: ![R Logo](/Users/jasminelee/Desktop/MSDS/2026_Spring/PH_718/Rlogo.png){width=200px height=200px}
+    - We need to have the image file on our computer and provide the correct path to display the image in the document.
+
+## Code Chunks/Blocks
+- Inline code: using backticks `` `code` ``
+  - Example 1: The mean of the `cars` dataset is `r mean(c(1, 2, 3, 4, 5))`
+  - Example 2: `r mean(cars$speed)` - Mean of the speed variable in the cars dataset.
+
+- Fenced code blocks: using triple backticks ``` for larger code sections
+  - Example 1:
+    ```
+    print("Hello, World!")
+    ```
+  - Example 2:
+    ```{r}
+    print("Hello, World!")
+    ```
+    
+- Blockquotes: using `>` for quoting text
+  - Example: `> blockquote`
+  
+## Extended syntax
+https://www.markdownguide.org/cheat-sheet/
+
+# Basics of R Markdown
+
+## R Code chunks
+
+R Markdown extends Markdown by allowing u to embed R code within document.
+A R code chunk starts w/ backticks and `{r}`.
+
+The answer to Q1 is:
+```{r}
+data(cars)
+summary(cars)
+```
+
+The code for Q2 is:
+```{r}
+result = 0
+for (i in 1:10^4) {
+  result = result + i^2
+}
+print(result)
+```
+
+## Plots
+You can also include plots in your R Markdown document. For example:
+```{r}
+data(mtcars)
+plot(
+  mtcars$mpg,
+  mtcars$hp,
+  main="MPG vs Horsepower",
+  xlab = "Miles Per Gallon (MPG)",
+  ylab = "Horsepower (HP)",
+  pch = 19, # point character
+  col = "cyan" # point color
+)
+```
+
+```{r, echo = FALSE}
+# echo = FALSE to hide the code chunk
+data(mtcars)
+plot(
+  mtcars$mpg,
+  mtcars$hp,
+  main="MPG vs Horsepower",
+  xlab = "Miles Per Gallon (MPG)",
+  ylab = "Horsepower (HP)",
+  pch = 19, # point character
+  col = "cyan" # point color
+)
+```
+
+```{r, echo = FALSE, fig.width = 6, fig.height = 4}
+# fig.align can be the other option
+data(mtcars)
+plot(
+  mtcars$mpg,
+  mtcars$hp,
+  main="MPG vs Horsepower",
+  xlab = "Miles Per Gallon (MPG)",
+  ylab = "Horsepower (HP)",
+  pch = 19, # point character
+  col = "cyan" # point color
+)
+```
+
+```{r, eval = FALSE}
+# eval = FALSE to prevent the code chunk from being executed
+# include = FALSE to hide both the code and the output ?
+# include = TRUE to include both the code and the output ? (default)
+data(mtcars)
+plot(
+  mtcars$mpg,
+  mtcars$hp,
+  main="MPG vs Horsepower",
+  xlab = "Miles Per Gallon (MPG)",
+  ylab = "Horsepower (HP)",
+  pch = 19, # point character
+  col = "cyan" # point color
+)
+```
+
+## Tables
+You can create tables using the `knitr::kable()` function. For example:
+```{r}
+library(knitr)
+kable(head(mtcars), caption = "First 6 rows of the mtcars dataset")
+```
+
+Another way is to resort to https://www.tablesgenerator.com/markdown_tables
+
+| line 1 | line 2 | line 3 |
+|--------|--------|--------|
+|        |   ss   | dsafsa |
+|   sd   |  feafd | dsafa  |
+
+
+## Incorporating references using a BibTex (`.bib`) file
+
+### Citing references
+
+### In-text citation
+Use the `@` symbol followed by the citation key of corresponding entry.
+Example: @Wickham2016 will be used extensively later.
+
+### Parenthetical citation
+Example: We are going to extensively use the package `ggplot2` [@Wickham2016].
+
+### Multiple citations
+Example: Several `R` packages [@R2024; @tidyr2024; @Wickham2016] are fairly useful.
+
+## Fenerate the Bibliography
+# References
+install.packages("tidyverse")
+citation("tidyverse")
+Example: Several `R` packages [@R2024; @tidyr2024; @Wickham2016; @tidyverse] are fairly useful.

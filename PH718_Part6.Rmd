@@ -1,0 +1,121 @@
+---
+title: "PH718_Part6"
+author: "Jasmine"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r, echo = T, include = T, eval = T, cache = T, message = T}
+college = read.csv(file = "https://www.statlearning.com/s/College.csv", header = T)
+
+rownames(college) <- college[, 1]
+college <- college[, -1]
+```
+
+```{r, echo = T, include = T, eval = F, cache = T, message = T}
+summary(college)
+```
+
+## Exploring relationships via `plot()`
+```{r, echo = T, include = T, eval = T, cache = T, message = T}
+plot(
+  college$Apps, college$Accept,
+  xlab = "Number of Applications",
+  ylab = "Number of Acceptances",
+  main = "Applications vs Acceptances",
+  col = "cyan",
+  pch = 19
+)
+abline(lm(college$Accept ~ college$Apps), col = "green")
+```
+
+## Visualizing many relationships: pairs()
+```{r, echo = T, include = T, eval = T, cache = T, message = T}
+pairs(college[, 2:10])
+```
+
+## Modern alternative to `pairs()`: `GGally::ggpairs()`
+```{r, echo = T, include = T, eval = T, cache = T, message = T}
+# college <- college[, -1] # this might delete the 'Private' column, the first column, so be careful
+GGally::ggpairs(college[, 2:10])
+```
+
+## Comparing groups via `boxplot()`
+```{r, echo = T, include = T, eval = T, cache = T, message = T}
+college$Private <- factor(college$Private)
+boxplot(
+  Outstate ~ Private,
+  data = college,
+  col = c("cyan", "green"),
+  main = "Out-of-State Tuition by College Type",
+  ylab = "Out-of-State Tuition"
+)
+```
+
+```{r, echo = T, include = T, eval = T, cache = T, message = T}
+Elite <- rep("No", nrow(college))
+Elite[college$Top10perc > 50] <- "Yes"
+Elite <- as.factor(Elite)
+college <- data.frame(college, Elite) # or college$Elite = Elite
+```
+
+```{r, echo = T, include = T, eval = T, cache = T, message = T}
+boxplot(Outstate ~ Elite, data = college)
+```
+
+```{r, echo = T, include = T, eval = F, cache = T, message = T}
+hist(
+college$Top25perc,
+main = "Distribution of Top 25% Students",
+xlab = "Percent of Students in Top 25%"
+)
+```
+
+```{r, echo = T, include = T, eval = T, cache = T, message = T}
+hist(
+college$Top25perc,
+main = "Distribution of Top 25% Students",
+xlab = "Percent of Students in Top 25%"
+)
+```
+
+```{r, echo = T, include = T, eval = T, cache = T, message = T}
+par(mfrow = c(1, 2))
+hist(college$Top25perc, breaks = 1, freq = T, main = 'breaks=1')
+hist(college$Top25perc, breaks = 1, freq = F, main = 'breaks=1')
+hist(college$Top25perc, breaks = 10, freq = T, main = 'breaks=10')
+hist(college$Top25perc, breaks = 100, freq = T, main = 'breaks=100')
+hist(college$Top25perc, breaks = 1000, freq = T, main = 'breaks=1000')
+par(mfrow = c(1, 1))
+```
+
+## Heatmaps of correlation matirx via image()
+```{r, echo = T, include = T, eval = T, cache = T, message = T}
+num_var_idx = NULL
+for (j in 1:ncol(college)) {
+  if(is.numeric(college[, j])) {
+    num_var_idx <- c(num_var_idx, j)
+  }
+}
+college_num <- college[, num_var_idx] # subsetting numeric variables
+cor_matrix <- cor(college_num)
+col_palette <- colorRampPalette(c("maroon","seagreen2","yellow"))(100)
+image(
+  1:ncol(cor_matrix),
+  1:ncol(cor_matrix),
+  cor_matrix,
+  axes = FALSE,
+  xlab = "",
+  ylab = "",
+  main = "Heatmap of Covariance Matrix",
+  col = col_palette
+)
+axis(1, at = 1:ncol(cor_matrix), labels = colnames(cor_matrix), las = 2)
+axis(2, at = 1:ncol(cor_matrix), labels = colnames(cor_matrix), las = 2)
+```
+
+## Interpretation:
+<!-- # Need this line to be spaced to print the list -->
+- Colors close to green or red indicate larger correlation coefficients.
+- Large positive values suggest variables increase together.
+- Neg. values indicate variables move in opposite directions.
