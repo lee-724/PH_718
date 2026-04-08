@@ -1,0 +1,87 @@
+---
+title: "PH 718 Data Management and Visualization in `R`"
+subtitle: "Assignment 3"
+author: Jasmine Lee (991-36-4965)
+date: "`r Sys.Date()`"
+output: pdf_document
+bibliography: ph718.bib
+link-citations: F
+csl: apa-6th-edition.csl 
+---
+
+## Q1
+
+### Answer to Q1
+There are 6580 missing values in the `selfreport` dataset.
+
+### Code for Q1
+```{r}
+df <- mice::selfreport
+df$hm = log(df$hm)
+df$wm = log(df$wm)
+sum(is.na(df))
+```
+
+## Q2
+
+### Answer to Q2
+The mean for hm and wm after imputation are approximately 5.157 and 4.333, respectively.
+
+### Code for Q2
+```{r}
+df <- mice::selfreport
+df$hm = log(df$hm)
+df$wm = log(df$wm)
+
+# Locations of missing values
+missing_hm <- which(is.na(df$hm))
+missing_wm <- which(is.na(df$wm))
+
+# Simple imputation - To check if there's no empty data for the regression model. If we do not have missing values, no need to do imputation at all.
+df$hm[missing_hm] <- mean(df$hm, na.rm = TRUE)
+df$wm[missing_wm] <- mean(df$wm, na.rm = TRUE)
+
+# Compute the mean after imputation
+mean(df$hm[missing_hm])
+mean(df$wm[missing_wm])
+```
+
+```{r}
+
+```
+## Q3
+
+### Answer to Q3
+For the `selfreport` dataset, there are two variables that are usually of interest for regression analysis: `hm` (height in meters) and `wm` (weight in meters).
+
+We can exclude ID or Row Identifier, as they do not provide meaningful information for regression analysis. Additionally, any variables that are not going to be used as a predictor. Lastly, imputing an ID is non-sensical, as it is a unique identifier for each observation.
+
+Also, since hm and wm are the variables of interest, if one of lm(wm ~ hm) or lm(hm ~ wm) is your regression model, then you can exclude the other variable as well. Those won't affect your model and they do not need to be imputed.
+
+## Q4
+
+### Answer to Q4
+The mean of two completed datasets after imputation are adjacent to each other. Means of both completed dataset are around 5.157.
+
+### Code for Q4
+```{r}
+library(mice)
+df <- mice::selfreport
+df$hm = log(df$hm)
+df$wm = log(df$wm)
+
+# Create 2 imputations
+imp <- mice(df, m = 2, seed = 718)
+
+# Extract the first completed dataset
+data_1 <- complete(imp, 1)
+# Extract the second completed dataset
+data_2 <- complete(imp, 2)
+
+# Compute the mean of hm in each
+mean_hm_1 <- mean(data_1$hm)
+mean_hm_2 <- mean(data_2$hm)
+
+mean_hm_1
+mean_hm_2
+```

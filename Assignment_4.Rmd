@@ -1,0 +1,140 @@
+---
+title: "PH 718 Data Management and Visualization in `R`"
+subtitle: "Assignment 4"
+author: Jasmine Lee (991-36-4965)
+date: "`r Sys.Date()`"
+output: pdf_document
+bibliography: ph718.bib
+link-citations: F
+csl: apa-6th-edition.csl 
+---
+
+# Q1
+
+## Answer to Q1(a)
+The session id of 100th row of the cleaned dataset is 6397339.
+
+## Code for Q1(a)
+```{r}
+library(moderndive)
+library(dplyr)
+library(tidyr)
+
+ev_cleaned <- ev_charging %>%
+  filter(kwh_total > 25 | distance < 10) %>%
+  arrange(desc(kwh_total), distance)
+
+ev_cleaned$session_id[100]
+```
+
+## Answer to Q1(b)
+The 'cost_per_kwh' = 0 and 'hours_per_kwh' = 0.547 for the session id of 7090607.
+
+## Code for Q1(b)
+```{r}
+ev_expanded <- ev_charging %>%
+  mutate(
+   cost_per_kwh = dollars / kwh_total,
+   hours_per_kwh = charge_time_hrs / kwh_total
+  )
+
+ev_expanded %>%
+  filter(session_id == 7090607) %>%
+  select(cost_per_kwh, hours_per_kwh)
+```
+
+## Answer to Q1(c)
+The median cost per kwh for all four facility type is 0.
+
+And the median hours per kwh for each facility type are as follows:
+
+- Manufacturing: 0.4225
+- Office: 0.460
+- Research and development: 0.500
+- Other: 0.584
+
+## Code for Q1(c)
+```{r}
+ev_expanded %>%
+  group_by(facility_type) %>%
+  summarise(
+    median_cost_per_kwh = median(cost_per_kwh, na.rm = TRUE),
+    median_hours_per_kwh = median(hours_per_kwh, na.rm = TRUE)
+  )
+```
+## Answer to Q1(d)
+The average kwh_total for each facility type are as follows:
+
+- manufacturing(1): 5.753
+- office(2): 5.603
+- research and development(3): 5.842
+- other(4): 7.217
+
+## Code for Q1(d)
+```{r}
+ev_expanded_2 <- ev_expanded %>%
+  mutate(
+    facility_number = case_when(
+      facility_type == "manufacturing" ~ 1,
+      facility_type == "office" ~ 2,
+      facility_type == "research and development" ~ 3,
+      facility_type == "other" ~ 4
+    )
+  )
+
+ev_expanded_2 %>%
+  group_by(facility_number) %>%
+  summarise(avg_kwh_total = mean(kwh_total, na.rm = TRUE))
+```
+
+# Q2
+
+## Answer to Q2(a)
+The average for waiting and duration grouped by existence of webcam are approximately 218.500 and 217.380, respectively.
+
+## Code for Q2(a)
+```{r}
+library(moderndive)
+library(dplyr)
+library(tidyr)
+
+faithful_summary <- old_faithful_2024 %>%
+  group_by(webcam) %>%
+  summarise(
+    avg_waiting = mean(waiting, na.rm = TRUE),
+    avg_duration = mean(duration, na.rm = TRUE)
+  )
+
+faithful_summary
+```
+## Answer to Q2(b)
+The average for waiting and duration grouped by existence of webcam are approximately as follows:
+
+- Webcam: No, Variable: avg_waiting = 172.333
+- Webcam: No, Variable: avg_duration = 218.500
+- Webcam: Yes, Variable: avg_waiting = 159.472
+- Webcam: Yes, Variable: avg_duration = 217.380
+
+## Code for Q2(b)
+```{r}
+faithful_summary_long <- faithful_summary %>%
+  pivot_longer(
+    cols = c(avg_waiting, avg_duration),
+    names_to = "Variable",
+    values_to = "Value"
+  )
+
+faithful_summary_long
+```
+## Answer to Q2(c)
+Nothing changes since we only changed the entry of the Variable column.
+
+## Code for Q2(c)
+```{r}
+faithful_summary_long <- faithful_summary_long %>%
+  mutate(
+    Variable = sub("avg_", "", Variable)
+  )
+
+faithful_summary_long
+```

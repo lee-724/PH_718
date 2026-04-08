@@ -1,0 +1,136 @@
+---
+title: "PH 718 Data Management and Visualization in `R`"
+subtitle: "Assignment 2"
+author: Jasmine Lee (991-36-4965)
+date: "`r Sys.Date()`"
+output: pdf_document
+bibliography: ph718.bib
+link-citations: F
+csl: apa-6th-edition.csl 
+---
+
+## Q1
+
+### Answer to Q1
+There are 3 cars that have 6 cylinders and manual transmission.
+
+### Code for Q1
+```{r}
+data(mtcars)
+df <- mtcars
+
+# Factorize cyl
+df$cyl_f <- factor(df$cyl, levels = c(4, 6, 8),
+                   labels = c("4 cylinders", "6 cylinders", "8 cylinders"))
+
+# 6 cylinders and manual transmission
+cyl_6_manual <- sum(df$cyl_f == "6 cylinders" & df$am == 1)
+cyl_6_manual
+```
+
+## Q2
+
+### Answer to Q2
+The average power-to-weight ratio for cars with 4 cylinders is approximately 37.925.
+
+### Code for Q2
+```{r}
+data(mtcars)
+df <- mtcars
+
+# Create new variable: power_to_weight
+df$power_to_weight <- df$hp / df$wt
+
+# Compute the average power-to-weight ratio for cars with 4 cylinders
+avg_ptw_4cyl <- mean(df$power_to_weight[df$cyl == 4])
+avg_ptw_4cyl
+```
+
+## Q3
+
+### Answer to Q3
+There are 6 cars that are higher than 25 mpg.
+
+### Code for Q3
+```{r}
+data(mtcars)
+df <- mtcars
+
+# Create new variable: high_mpg
+df$high_mpg <- ifelse(df$mpg > 25, "1", "0")
+# Count the number of cars with high_mpg == "1"
+sum(df$high_mpg == "1")
+```
+
+## Q4
+
+### Answer to Q4
+There are 0 cars that do not satisfy the conditions.
+
+### Code for Q4
+```{r}
+data(mtcars)
+df <- mtcars
+
+# Count that doesn't satisfy the conditions: 5 < mpg < 50 and hp > 0
+count <- 0
+for (i in 1:nrow(df)) {
+  if (!((df$mpg[i] > 5 && df$mpg[i] < 50) && df$hp[i] > 0)) {
+    count <- count + 1
+  }
+}
+print(count)
+```
+
+## Q5
+
+### Answer to Q5
+The average horsepower for cars with 8 cylinders and automatic transmission is approximately 194.167.
+
+### Code for Q5
+```{r}
+data(mtcars)
+df <- mtcars
+
+# Create a subset of cars with 8 cylinders and automatic transmission
+cyl_8_auto <- df$cyl == 8 & df$am == 0
+
+# Compute the mean hp for this subset
+mean_hp_cyl_8_auto <- mean(df$hp[cyl_8_auto])
+mean_hp_cyl_8_auto
+```
+
+## Q6
+
+### Answer to Q6
+There is only 1 car that satisfies the conditions: high_mpg == "1" and power_to_weight > 50 from the cleaned mtcars dataset.
+
+### Code for Q6
+```{r}
+data(mtcars)
+df <- mtcars
+
+# Write a function: clean_mtcars
+clean_mtcars <- function(df) {
+  df$cyl <- factor(df$cyl, levels = c(4, 6, 8),
+                   labels = c("4 cylinders", "6 cylinders", "8 cylinders"))
+  df$am <- factor(df$am, levels = c(0, 1), labels = c("Automatic", "Manual"))
+  df$gear <- factor(df$gear, levels = c(3, 4, 5),
+                    labels = c("3 gears", "4 gears", "5 gears"))
+  df$power_to_weight <- df$hp / df$wt
+  df$high_mpg <- ifelse(df$mpg > 25, "1", "0")
+  df
+}
+
+# Apply the function to mtcars
+cleaned_df <- clean_mtcars(mtcars)
+
+# Count cars satisfying the conditions: high_mpg == "1" and power_to_weight > 50
+count <- 0
+for (i in 1:nrow(cleaned_df)) {
+  if (cleaned_df$high_mpg[i] == "1" && cleaned_df$power_to_weight[i] > 50) {
+    count <- count + 1
+  }
+}
+print(count)
+```
