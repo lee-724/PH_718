@@ -1,0 +1,3 @@
+- This course is called "Intermediate Biostatistics".
+- For this section, I will be uploading my course notes and assignments that I submitted throughout the course.
+- For my course notes, I added my own notes to what professor has given us, so I can understand what is happening in each chunk of codes.
